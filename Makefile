@@ -1,22 +1,35 @@
 # Builds everything as 32-bit i386 (needed by swtch.s).
 # One-time setup:  sudo apt install gcc-multilib
+# All objects and executables go in build/.
 CC     = gcc
-CFLAGS = -m32 -g -Wall -fno-pie
+CFLAGS = -m32 -g -Wall -fno-pie -I.
 LDFLAGS = -m32 -no-pie
+BUILD  = build
 
-OBJS = swtch.o chan.o sem.o
+OBJS = $(addprefix $(BUILD)/, swtch.o chan.o sem.o)
 # add thread.o once thread.c exists (therad.c is currently misspelled)
-# OBJS += thread.o
+# OBJS += $(BUILD)/thread.o
+
+EXAMPLES = $(patsubst examples/%.c, $(BUILD)/%, $(wildcard examples/*.c))
 
 all: $(OBJS)
 
+# executables (need thread.o, so enable it above first):  make examples
+examples: $(EXAMPLES)
+
+$(BUILD):
+	mkdir -p $(BUILD)
+
 # swtch.s uses #if, so it must go through the C preprocessor
-swtch.o: swtch.s
+$(BUILD)/swtch.o: swtch.s | $(BUILD)
 	$(CC) $(CFLAGS) -x assembler-with-cpp -c $< -o $@
 
-%.o: %.c
+$(BUILD)/%.o: %.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(BUILD)/%: examples/%.c $(OBJS) | $(BUILD)
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(OBJS) -o $@
+
 clean:
-	rm -f *.o
-.PHONY: all clean
+	rm -rf $(BUILD)
+.PHONY: all examples clean
