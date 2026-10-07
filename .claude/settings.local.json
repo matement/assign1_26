@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(gcc --version)",
-      "Bash(dpkg -l gcc-multilib)",
-      "Bash(sudo -n true)"
-    ]
-  }
-}
