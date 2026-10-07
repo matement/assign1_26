@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-Queue_t *ready_queue;
-int global_thread_id = 0;
-int global_thread_count = 0;
+static Queue_t *ready_queue;
+static int global_thread_id = 0;
+static int global_thread_count = 0;
 
 
 /* dummy stubs so the project links; replace with the real implementation */
