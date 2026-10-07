@@ -3,14 +3,18 @@
 #define THREAD_INCLUDED
 
 #include <stddef.h>
-#include <stdint.h>
 
-typedef struct thread{
-        int *sptr;
-        int tid;
-}Thread_t;
+typedef struct Queue Queue_t;   /* forward declaration, avoids circular include */
 
-extern void Thread_init(void);
+typedef struct thread {
+        int *sp;        //stack pointer
+        int tid;        //thread id
+        Queue_t *q;     //threads in queue when join is called
+        int *startsp;
+        void (*exitcode)(void *);
+} Thread_t;
+
+extern Thread_t *Thread_init(void);
 extern int Thread_new(int func(void *), void *args, size_t nbytes, ...);
 extern void Thread_exit(int code);
 extern int Thread_self(void);

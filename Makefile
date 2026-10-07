@@ -6,13 +6,11 @@ CFLAGS = -m32 -g -Wall -fno-pie -I.
 LDFLAGS = -m32 -no-pie
 BUILD  = build
 
-OBJS = $(addprefix $(BUILD)/, swtch.o chan.o sem.o)
-# add thread.o once thread.c exists (therad.c is currently misspelled)
-# OBJS += $(BUILD)/thread.o
+OBJS = $(addprefix $(BUILD)/, swtch.o chan.o sem.o queue.o thread.o)
 
 EXAMPLES = $(patsubst examples/%.c, $(BUILD)/%, $(wildcard examples/*.c))
 
-all: $(OBJS)
+all: $(OBJS) $(BUILD)/main
 
 # executables (need thread.o, so enable it above first):  make examples
 examples: $(EXAMPLES)
@@ -26,6 +24,9 @@ $(BUILD)/swtch.o: swtch.s | $(BUILD)
 
 $(BUILD)/%.o: %.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/main: main.c $(OBJS) | $(BUILD)
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(OBJS) -o $@
 
 $(BUILD)/%: examples/%.c $(OBJS) | $(BUILD)
 	$(CC) $(CFLAGS) $(LDFLAGS) $< $(OBJS) -o $@
