@@ -4,5 +4,7 @@
 
 
 int main(){
-
+        Thread_init();
+        printf("Thread is %d\n", Thread_self());
+        return 0;
 }

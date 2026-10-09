@@ -25,5 +25,5 @@ Queue_t *initq();
 QNode *initnode();
 int enqueue(Queue_t **q, Thread_t *t);
 int dequeue(Queue_t **q, Thread_t **t);
-
+int isEmptyq(Queue_t *q);
 #endif

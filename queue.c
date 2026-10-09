@@ -63,3 +63,7 @@ int dequeue(Queue_t **q, Thread_t **t){
         free(node);
         return success;        
 }
+
+int isEmptyq(Queue_t *q){
+        return q->count == 0;
+}

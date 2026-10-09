@@ -2,7 +2,7 @@
 # One-time setup:  sudo apt install gcc-multilib
 # All objects and executables go in build/.
 CC     = gcc
-CFLAGS = -m32 -g -Wall -fno-pie -I.
+CFLAGS = -m32 -g -Wall -fno-pie -fsanitize=address -I.
 LDFLAGS = -m32 -no-pie
 BUILD  = build
 
