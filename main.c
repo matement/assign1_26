@@ -4,7 +4,5 @@
 
 
 int main(){
-        Thread_init();
-        printf("Thread is %d\n", Thread_self());
-        return 0;
+        if(printf("hello world\n")){}
 }
