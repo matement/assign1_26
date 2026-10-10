@@ -1,18 +1,15 @@
 # Builds everything as 32-bit i386 (needed by swtch.s).
 # One-time setup:  sudo apt install gcc-multilib
-# All objects and executables go in build/.
-CC     = gcc
-CFLAGS = -m32 -g -Wall -fno-pie -fsanitize=address -I.
+CC      = gcc
+SAN     =
+CFLAGS  = -m32 -g -Wall -fno-pie -MMD -MP -I. $(SAN)
 LDFLAGS = -m32 -no-pie
-BUILD  = build
+BUILD   = build
 
 OBJS = $(addprefix $(BUILD)/, swtch.o chan.o sem.o queue.o thread.o)
-
 EXAMPLES = $(patsubst examples/%.c, $(BUILD)/%, $(wildcard examples/*.c))
 
 all: $(OBJS) $(BUILD)/main
-
-# executables (need thread.o, so enable it above first):  make examples
 examples: $(EXAMPLES)
 
 $(BUILD):
@@ -31,6 +28,13 @@ $(BUILD)/main: main.c $(OBJS) | $(BUILD)
 $(BUILD)/%: examples/%.c $(OBJS) | $(BUILD)
 	$(CC) $(CFLAGS) $(LDFLAGS) $< $(OBJS) -o $@
 
+# table/queue unit test: includes thread.c directly, so it links
+# queue.o and swtch.o but NOT thread.o
+test_table: test_table.c $(BUILD)/queue.o $(BUILD)/swtch.o | $(BUILD)
+	$(CC) $(CFLAGS) $(LDFLAGS) -fsanitize=address -DSTART_THREAD_COUNT=2 $< $(BUILD)/queue.o $(BUILD)/swtch.o -o $(BUILD)/$@
+
 clean:
 	rm -rf $(BUILD)
-.PHONY: all examples clean
+.PHONY: all examples test_table clean
+
+-include $(wildcard $(BUILD)/*.d)
