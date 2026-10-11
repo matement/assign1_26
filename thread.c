@@ -175,7 +175,10 @@ void Thread_exit(int code) {
         Thread_t *w = NULL;
         while (self->q != NULL && dequeue(&self->q, &w) == success) {
                 w->joinret = code;
-                if (enqueue(&ready_queue, w) == failure) { fprintf(stderr, "enqueue failed\n"); exit(-1); }
+                if (enqueue(&ready_queue, w) == failure) { 
+                        fprintf(stderr, "enqueue failed\n"); 
+                        exit(-1); 
+                }
         }
 
         if (global_thread_count == 0)    /* last thread: the whole program ends */
@@ -201,7 +204,7 @@ int Thread_self(void) {
         return current->tid;
 }
 int Thread_join(int tid) {
-                assert(current != NULL);
+        assert(current != NULL);
         if (tid == 0) {
                 assert(joinall == NULL);                 /* checked error: only one join(0) */
                 if (global_thread_count == 1) return 0;  /* we are the only thread */
@@ -213,7 +216,10 @@ int Thread_join(int tid) {
         Thread_t *t = get_thread(tid);
         if (t == NULL) return -1;                        /* nonexistent (or already exited) */
         if (t->q == NULL) t->q = initq();
-        if (enqueue(&t->q, current) == failure) { fprintf(stderr, "enqueue failed\n"); exit(-1); }
+        if (enqueue(&t->q, current) == failure) { 
+                fprintf(stderr, "enqueue failed\n"); 
+                exit(-1); 
+        }
         block();
         return current->joinret;
 }
