@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include "thread_internal.h"
 
 #define START_THREAD_COUNT 16
 #define STACK_SIZE 16*1024 
@@ -94,7 +95,7 @@ static void reap(void) {
 }
 
 /* current has already been put wherever it waits (a queue or joinall); run someone else */
-static void block(void) {
+void thread_block(void) {
         Thread_t *next = NULL;
         if (dequeue(&ready_queue, &next) == failure) {
                 fprintf(stderr, "deadlock: every thread is blocked\n");
